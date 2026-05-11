@@ -30,4 +30,12 @@ jobs:
         run: mvn -DskipTests package
 
       - name: Run hermetic tests
-        run: mvn test
+        run: |
+          set +e
+          mvn test
+          status=$?
+          if [ "$status" -ne 0 ]; then
+            echo "==== Surefire reports ===="
+            find . -path "*/target/surefire-reports/*.txt" -print -exec cat {} \;
+          fi
+          exit "$status"
