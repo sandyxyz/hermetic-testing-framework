@@ -27,7 +27,7 @@ class OrderController {
     }
 
     @GetMapping("/{orderId}")
-    Order get(@PathVariable long orderId) {
+    Order get(@PathVariable("orderId") long orderId) {
         return orderService.get(orderId);
     }
 }

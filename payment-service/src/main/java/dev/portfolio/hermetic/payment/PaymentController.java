@@ -27,7 +27,7 @@ class PaymentController {
     }
 
     @GetMapping("/{paymentId}")
-    Payment get(@PathVariable String paymentId) {
+    Payment get(@PathVariable("paymentId") String paymentId) {
         return paymentService.get(paymentId);
     }
 }
