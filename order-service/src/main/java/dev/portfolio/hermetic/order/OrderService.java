@@ -28,10 +28,8 @@ class OrderService {
     }
 
     Order get(long orderId) {
-        return orderCache.get(orderId).orElseGet(() -> {
-            Order order = orderRepository.findById(orderId);
-            orderCache.put(order);
-            return order;
-        });
+        Order order = orderRepository.findById(orderId);
+        orderCache.put(order);
+        return order;
     }
 }
