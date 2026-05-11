@@ -1,0 +1,61 @@
+services:
+  order-mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: orders
+      MYSQL_USER: orders
+      MYSQL_PASSWORD: orders
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+
+  payment-mysql:
+    image: mysql:8.4
+    environment:
+      MYSQL_DATABASE: payments
+      MYSQL_USER: payments
+      MYSQL_PASSWORD: payments
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  payment-gateway:
+    image: wiremock/wiremock:3.9.2
+    ports:
+      - "9090:8080"
+
+  payment-service:
+    build:
+      context: ./payment-service
+    depends_on:
+      - payment-mysql
+      - payment-gateway
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://payment-mysql:3306/payments
+      SPRING_DATASOURCE_USERNAME: payments
+      SPRING_DATASOURCE_PASSWORD: payments
+      PAYMENT_GATEWAY_BASE_URL: http://payment-gateway:8080
+    ports:
+      - "8082:8082"
+
+  order-service:
+    build:
+      context: ./order-service
+    depends_on:
+      - order-mysql
+      - redis
+      - payment-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://order-mysql:3306/orders
+      SPRING_DATASOURCE_USERNAME: orders
+      SPRING_DATASOURCE_PASSWORD: orders
+      SPRING_DATA_REDIS_HOST: redis
+      SPRING_DATA_REDIS_PORT: 6379
+      PAYMENT_SERVICE_BASE_URL: http://payment-service:8082
+    ports:
+      - "8081:8081"
