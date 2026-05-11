@@ -1,5 +1,7 @@
 package dev.portfolio.hermetic.order;
 
+import dev.portfolio.hermetic.order.Models.Order;
+import dev.portfolio.hermetic.order.Models.OrderStatus;
 import java.math.BigDecimal;
 import java.sql.PreparedStatement;
 import java.sql.Statement;

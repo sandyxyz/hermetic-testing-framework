@@ -1,5 +1,9 @@
 package dev.portfolio.hermetic.payment;
 
+import dev.portfolio.hermetic.payment.Models.GatewayResponse;
+import dev.portfolio.hermetic.payment.Models.Payment;
+import dev.portfolio.hermetic.payment.Models.PaymentRequest;
+import dev.portfolio.hermetic.payment.Models.PaymentStatus;
 import org.springframework.stereotype.Service;
 
 @Service

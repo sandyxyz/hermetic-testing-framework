@@ -1,5 +1,6 @@
 package dev.portfolio.hermetic.payment;
 
+import dev.portfolio.hermetic.payment.Models.GatewayResponse;
 import java.math.BigDecimal;
 
 import org.springframework.beans.factory.annotation.Value;

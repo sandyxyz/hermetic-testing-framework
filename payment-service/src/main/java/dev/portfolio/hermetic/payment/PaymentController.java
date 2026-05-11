@@ -1,5 +1,7 @@
 package dev.portfolio.hermetic.payment;
 
+import dev.portfolio.hermetic.payment.Models.Payment;
+import dev.portfolio.hermetic.payment.Models.PaymentRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

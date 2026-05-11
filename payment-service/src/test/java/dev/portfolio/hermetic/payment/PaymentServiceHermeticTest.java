@@ -11,6 +11,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import dev.portfolio.hermetic.payment.Models.Payment;
+import dev.portfolio.hermetic.payment.Models.PaymentRequest;
+import dev.portfolio.hermetic.payment.Models.PaymentStatus;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;

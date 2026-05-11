@@ -2,23 +2,28 @@ package dev.portfolio.hermetic.order;
 
 import java.math.BigDecimal;
 
-record Order(
-        long id,
-        String userId,
-        BigDecimal amount,
-        OrderStatus status,
-        String paymentId
-) {
-}
+public final class Models {
+    private Models() {
+    }
 
-record CreateOrderRequest(String userId, BigDecimal amount) {
-}
+    public record Order(
+            long id,
+            String userId,
+            BigDecimal amount,
+            OrderStatus status,
+            String paymentId
+    ) {
+    }
 
-record PaymentResponse(String paymentId, String status) {
-}
+    public record CreateOrderRequest(String userId, BigDecimal amount) {
+    }
 
-enum OrderStatus {
-    CREATED,
-    PAYMENT_SUCCESS,
-    PAYMENT_FAILED
+    public record PaymentResponse(String paymentId, String status) {
+    }
+
+    public enum OrderStatus {
+        CREATED,
+        PAYMENT_SUCCESS,
+        PAYMENT_FAILED
+    }
 }

@@ -1,5 +1,7 @@
 package dev.portfolio.hermetic.payment;
 
+import dev.portfolio.hermetic.payment.Models.Payment;
+import dev.portfolio.hermetic.payment.Models.PaymentStatus;
 import java.math.BigDecimal;
 import java.util.UUID;
 

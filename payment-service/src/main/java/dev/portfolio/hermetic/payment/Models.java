@@ -2,21 +2,26 @@ package dev.portfolio.hermetic.payment;
 
 import java.math.BigDecimal;
 
-record Payment(
-        String paymentId,
-        long orderId,
-        BigDecimal amount,
-        PaymentStatus status
-) {
-}
+public final class Models {
+    private Models() {
+    }
 
-record PaymentRequest(long orderId, BigDecimal amount) {
-}
+    public record Payment(
+            String paymentId,
+            long orderId,
+            BigDecimal amount,
+            PaymentStatus status
+    ) {
+    }
 
-record GatewayResponse(boolean approved) {
-}
+    public record PaymentRequest(long orderId, BigDecimal amount) {
+    }
 
-enum PaymentStatus {
-    SUCCESS,
-    FAILED
+    public record GatewayResponse(boolean approved) {
+    }
+
+    public enum PaymentStatus {
+        SUCCESS,
+        FAILED
+    }
 }

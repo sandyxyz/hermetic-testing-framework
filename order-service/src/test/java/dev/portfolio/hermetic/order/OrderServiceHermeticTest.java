@@ -11,6 +11,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import dev.portfolio.hermetic.order.Models.CreateOrderRequest;
+import dev.portfolio.hermetic.order.Models.Order;
+import dev.portfolio.hermetic.order.Models.OrderStatus;
 import java.math.BigDecimal;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.Test;
