@@ -22,22 +22,34 @@ class OrderCache {
                 order.amount().toPlainString(),
                 order.status().name(),
                 order.paymentId() == null ? "" : order.paymentId());
-        redisTemplate.opsForValue().set(key(order.id()), value);
+        try {
+            redisTemplate.opsForValue().set(key(order.id()), value);
+        } catch (RuntimeException ignored) {
+            // Redis is a cache only; MySQL remains the source of truth.
+        }
     }
 
     Optional<Order> get(long orderId) {
-        String value = redisTemplate.opsForValue().get(key(orderId));
-        if (value == null) {
+        try {
+            String value = redisTemplate.opsForValue().get(key(orderId));
+            if (value == null) {
+                return Optional.empty();
+            }
+
+            String[] parts = value.split("\\|", -1);
+            if (parts.length != 4) {
+                return Optional.empty();
+            }
+
+            return Optional.of(new Order(
+                    orderId,
+                    parts[0],
+                    new BigDecimal(parts[1]),
+                    OrderStatus.valueOf(parts[2]),
+                    parts[3].isBlank() ? null : parts[3]));
+        } catch (RuntimeException ignored) {
             return Optional.empty();
         }
-
-        String[] parts = value.split("\\|", -1);
-        return Optional.of(new Order(
-                orderId,
-                parts[0],
-                new BigDecimal(parts[1]),
-                OrderStatus.valueOf(parts[2]),
-                parts[3].isBlank() ? null : parts[3]));
     }
 
     private String key(long orderId) {
