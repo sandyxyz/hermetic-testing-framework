@@ -11,6 +11,7 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.portfolio.hermetic.order.Models.CreateOrderRequest;
 import dev.portfolio.hermetic.order.Models.Order;
 import dev.portfolio.hermetic.order.Models.OrderStatus;
@@ -30,7 +31,12 @@ import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
 @Testcontainers
-@SpringBootTest(webEnvironment = RANDOM_PORT)
+@SpringBootTest(
+        webEnvironment = RANDOM_PORT,
+        properties = {
+                "server.error.include-message=always",
+                "server.error.include-stacktrace=always"
+        })
 class OrderServiceHermeticTest {
     @Container
     static final MySQLContainer<?> mysql = new MySQLContainer<>("mysql:8.4")
@@ -52,6 +58,9 @@ class OrderServiceHermeticTest {
     @Autowired
     TestRestTemplate restTemplate;
 
+    @Autowired
+    ObjectMapper objectMapper;
+
     @AfterAll
     static void stopPaymentService() {
         paymentService.stop();
@@ -68,7 +77,7 @@ class OrderServiceHermeticTest {
     }
 
     @Test
-    void createsOrderWithMockedPaymentServiceAndIsolatedMySqlAndRedis() {
+    void createsOrderWithMockedPaymentServiceAndIsolatedMySqlAndRedis() throws Exception {
         paymentService.stubFor(post("/payments")
                 .withRequestBody(equalToJson("""
                         {
@@ -93,10 +102,20 @@ class OrderServiceHermeticTest {
         assertThat(created.getBody().status()).isEqualTo(OrderStatus.PAYMENT_SUCCESS);
         assertThat(created.getBody().paymentId()).isEqualTo("pay-123");
 
-        ResponseEntity<Order> fetched = restTemplate.getForEntity("/orders/{orderId}", Order.class, created.getBody().id());
+        assertThat(created.getBody().id()).isPositive();
 
-        assertThat(fetched.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(fetched.getBody()).isEqualTo(created.getBody());
+        ResponseEntity<String> fetched = restTemplate.getForEntity(
+                "/orders/{orderId}",
+                String.class,
+                created.getBody().id());
+
+        assertThat(fetched.getStatusCode())
+                .withFailMessage("GET /orders/%s returned %s with body: %s",
+                        created.getBody().id(),
+                        fetched.getStatusCode(),
+                        fetched.getBody())
+                .isEqualTo(HttpStatus.OK);
+        assertThat(objectMapper.readValue(fetched.getBody(), Order.class)).isEqualTo(created.getBody());
         verify(postRequestedFor(urlEqualTo("/payments")));
     }
 }
