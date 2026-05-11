@@ -7,6 +7,7 @@ on:
 jobs:
   build-test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -18,5 +19,15 @@ jobs:
           java-version: "17"
           cache: maven
 
-      - name: Run tests
+      - name: Show tool versions
+        run: |
+          java -version
+          mvn -version
+          docker --version
+          docker info
+
+      - name: Compile services
+        run: mvn -DskipTests package
+
+      - name: Run hermetic tests
         run: mvn test
